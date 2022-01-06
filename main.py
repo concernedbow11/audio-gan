@@ -29,10 +29,19 @@ def build_generator(start_filters, filter_size, latent_dim):
       x = LeakyReLU(0.2)(x)
       return x
     
-    
-    g1 = add_generator_block_1(5, start_filters * 4, filter_size)
-    g2 = add_generator_block_1(x, start_filters * 2, filter_size)
-    g3 = add_generator_block_1(x, start_filters, filter_size)
-    g4 = add_generator_block_1(x, start_filters, filter_size)  
+    inp = Input(shape=(latent_dim,))
+
+    # projection of the noise vector into a tensor with 
+    # same shape as last conv layer in discriminator
+    x = Dense(4 * 4 * (start_filters * 16), input_dim=latent_dim)(inp)
+    x = BatchNormalization()(x)
+    x = Reshape(target_shape=(4, 4, start_filters * 8))(x)
+
+    #following code upsamples the image
+    g1 = add_generator_block_1(x, start_filters * 16, 3)
+    g2 = add_generator_block_1(g1, start_filters * 8, 3)
+    g3 = add_generator_block_1(g2, start_filters * 4, 5)
+    g4 = add_generator_block_1(g3, start_filters * 2, 7)  
+
 
 
