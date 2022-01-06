@@ -72,5 +72,7 @@ def build_generator(start_filters, filter_size, latent_dim):
 
     x = Conv1D(3, kernel_size=5, padding='same', activation='LeakyReLU')(g8)
 
+    return Model(inputs=inp, outputs=x)
+
 
 
